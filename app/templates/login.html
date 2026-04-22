@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-full max-w-md w-full animate-fade-in pt-10">
+    <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+        <!-- Decoration -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+        
+        <div class="relative z-10">
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 mb-2text-center text-center">Welcome Back</h1>
+            <p class="text-gray-400 text-center text-sm mb-8">Sign in to SmartClass Vision</p>
+
+            <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-6">
+                
+                <!-- Role Selection -->
+                <div class="flex p-1 bg-white/5 rounded-xl border border-white/10" x-data="{ role: 'teacher' }">
+                    <label class="flex-1 text-center cursor-pointer">
+                        <input type="radio" name="role" value="admin" class="peer hidden">
+                        <div class="py-2 rounded-lg text-sm font-medium transition-all peer-checked:bg-indigo-600 peer-checked:text-white text-gray-400 hover:text-white">
+                            Administrator
+                        </div>
+                    </label>
+                    <label class="flex-1 text-center cursor-pointer">
+                        <input type="radio" name="role" value="teacher" class="peer hidden" checked>
+                        <div class="py-2 rounded-lg text-sm font-medium transition-all peer-checked:bg-purple-600 peer-checked:text-white text-gray-400 hover:text-white">
+                            Teacher
+                        </div>
+                    </label>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300">Username</label>
+                    <input type="text" name="username" required 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300">Password</label>
+                    <input type="password" name="password" required 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-medium py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(99,102,241,0.4)] transform hover:scale-[1.02]">
+                    Sign In →
+                </button>
+            </form>
+            
+            <p class="mt-8 text-center text-sm text-gray-400">
+                New Teacher? 
+                <a href="{{ url_for('auth.signup') }}" class="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Request Access</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

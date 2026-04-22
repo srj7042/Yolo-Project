@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-full max-w-md w-full animate-fade-in pt-10">
+    <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div class="relative z-10">
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-white text-center mb-2">Teacher Access Request</h1>
+            <p class="text-gray-400 text-center text-sm mb-8">Administrators monitor all signup requests.</p>
+
+            <form method="POST" action="{{ url_for('auth.signup') }}" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300">Choose Username</label>
+                    <input type="text" name="username" required 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-300">Set Password</label>
+                    <input type="password" name="password" required 
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors">
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium py-3 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] transform hover:-translate-y-0.5">
+                    Submit Request
+                </button>
+            </form>
+            
+            <p class="mt-8 text-center text-sm text-gray-400">
+                Already approved? 
+                <a href="{{ url_for('auth.login') }}" class="text-purple-400 hover:text-purple-300 font-medium transition-colors">Back to Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

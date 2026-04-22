@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-full max-w-7xl animate-fade-in space-y-8 pb-12">
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Face Training</h1>
+            <p class="text-gray-400">Upload multiple variations of students to improve YOLOv8 validation accuracy.</p>
+        </div>
+        <!-- Note: This button trains all ready students. Alternatively, each could have a train button -->
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for s in students %}
+        
+        <!-- Status Colors Logic -->
+        {% set status = "None" %}
+        {% set count_color = "red" %}
+        {% set bar_color = "bg-red-500" %}
+        {% set badge_class = "bg-red-500/10 text-red-500 border-red-500/20" %}
+        {% set badge_icon = "M6 18L18 6M6 6l12 12" %}
+        
+        {% if s.training_image_count >= 15 %}
+            {% set status = "Ready" %}
+            {% set count_color = "green" %}
+            {% set bar_color = "bg-green-500" %}
+            {% set badge_class = "bg-green-500/10 text-green-500 border-green-500/20" %}
+            {% set badge_icon = "M5 13l4 4L19 7" %}
+        {% elif s.training_image_count > 0 %}
+            {% set status = "Low" %}
+            {% set count_color = "yellow" %}
+            {% set bar_color = "bg-yellow-500" %}
+            {% set badge_class = "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" %}
+            {% set badge_icon = "M12 9v2m0 4h.01M12 21a9 9 0 110-18 9 9 0 010 18z" %}
+        {% endif %}
+        
+        <div class="bg-[#1e2336] rounded-xl p-5 border border-white/5 relative shadow-lg">
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    {{ s.name[0] }}
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold text-sm">{{ s.name }}</h4>
+                    <p class="text-gray-400 text-xs">{{ s.roll_number }} • {{ s.class_name }}</p>
+                </div>
+            </div>
+            
+            <!-- Progress Info -->
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-sm font-medium text-gray-400">
+                    <span class="text-{{ count_color }}-500 text-xl font-bold mr-1" id="count-{{ s.id }}">{{ s.training_image_count }}</span> / 20 images
+                </div>
+                
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold border {{ badge_class }}">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ badge_icon }}"></path></svg>
+                    {{ status }}
+                </span>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-black/40 rounded-full h-1.5 mb-5">
+                <div class="{{ bar_color }} h-1.5 rounded-full transition-all duration-500" style="width: {{ (s.training_image_count / 20 * 100) if s.training_image_count <= 20 else 100 }}%"></div>
+            </div>
+            
+            <!-- Dropzone -->
+            <div class="border border-dashed border-white/10 rounded-lg p-4 text-center hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-pointer group bg-black/20" 
+                 ondragover="event.preventDefault(); this.classList.add('border-blue-500');" 
+                 ondragleave="this.classList.remove('border-blue-500');" 
+                 ondrop="event.preventDefault(); this.classList.remove('border-blue-500'); uploadFiles(event.dataTransfer.files, {{ s.id }})"
+                 onclick="document.getElementById('file-{{ s.id }}').click()">
+                 
+                <input type="file" multiple id="file-{{ s.id }}" class="hidden" accept=".jpg,.jpeg,.png,.webp" onchange="uploadFiles(this.files, {{ s.id }})">
+                
+                <div class="text-blue-400 mb-2 flex justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                </div>
+                <p class="text-xs text-gray-300 font-medium">Click or drag to upload</p>
+                <p class="text-[10px] text-gray-500 mt-1">JPG, PNG, WebP</p>
+            </div>
+            
+            <!-- Train Button -->
+            <form method="POST" action="{{ url_for('admin.training_process', student_id=s.id) }}" class="mt-4">
+                <button type="submit" class="w-full py-2 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50" {% if s.training_image_count == 0 %}disabled{% endif %}>
+                    Integrate & Train Model
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function uploadFiles(files, studentId) {
+    if (files.length === 0) return;
+    
+    let formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('file', files[i]);
+    }
+    
+    // Quick optimistic UI bump logic here could go here, 
+    // but relying on page reload for perfect state synchronization is safer right now
+    
+    fetch(`/training/upload/${studentId}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload(); // Simplest way to refresh all progress bars and colors
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading:', error);
+    });
+}
+</script>
+{% endblock %}

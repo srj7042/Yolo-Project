@@ -1,0 +1,13 @@
+flask
+flask-sqlalchemy
+flask-login
+flask-bcrypt
+werkzeug
+ultralytics
+facenet-pytorch
+torch
+torchvision
+pandas
+openpyxl
+opencv-python
+python-multipart

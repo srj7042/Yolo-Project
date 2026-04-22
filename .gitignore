@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+attendance_system.db
+app/static/uploads/
+yolov8n.pt
+.DS_Store
+test_vision.py
+test_mps.py

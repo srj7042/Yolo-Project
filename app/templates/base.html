@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 Class Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased font-sans m-0 p-0 overflow-x-hidden flex flex-col min-h-screen">
+    
+    <!-- Navbar -->
+    {% if current_user.is_authenticated %}
+    <nav class="glass-panel sticky top-0 z-50 w-full px-6 py-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-lg ring-2 ring-indigo-500/50">
+                Y
+            </div>
+            <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 to-white hidden sm:block">
+                SmartClass Vision
+            </span>
+        </div>
+        <div class="flex items-center space-x-6 text-sm font-medium">
+            {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin.dashboard') }}" class="hover:text-indigo-400 transition-colors">Dashboard</a>
+            <a href="{{ url_for('admin.manage_teachers') }}" class="hover:text-amber-400 transition-colors text-yellow-500">Teachers</a>
+            <a href="{{ url_for('admin.manage_students') }}" class="hover:text-indigo-400 transition-colors">Students</a>
+            <a href="{{ url_for('admin.training_dashboard') }}" class="hover:text-indigo-400 transition-colors text-blue-400">Training</a>
+            <a href="{{ url_for('admin.analytics') }}" class="hover:text-indigo-400 transition-colors">Analytics</a>
+            {% else %}
+            <a href="{{ url_for('teacher.dashboard') }}" class="hover:text-indigo-400 transition-colors">Dashboard</a>
+            <a href="{{ url_for('teacher.take_attendance') }}" class="hover:text-indigo-400 transition-colors text-purple-400">Take Attendance</a>
+            <a href="{{ url_for('teacher.records') }}" class="hover:text-indigo-400 transition-colors text-emerald-400">Records</a>
+            {% endif %}
+            
+            <span class="text-gray-400 px-2">|</span>
+            <span class="text-indigo-300">Hi, {{ current_user.username }}</span>
+            <a href="{{ url_for('auth.logout') }}" class="px-4 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-all shadow-[0_0_15px_rgba(239,68,68,0.15)]">
+                Logout
+            </a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Flash Messages Component -->
+    <div class="max-w-7xl mx-auto w-full px-6 relative z-50">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mt-6 flex flex-col space-y-2">
+            {% for category, message in messages %}
+              <div class="p-4 rounded-xl shadow-lg flex items-center justify-between {% if category == 'success' %}bg-green-500/10 border-green-500/30 text-green-400{% elif category == 'danger' %}bg-red-500/10 border-red-500/30 text-red-400{% else %}bg-indigo-500/10 border-indigo-500/30 text-indigo-400{% endif %} border backdrop-blur-md animate-fade-in">
+                  <p class="font-medium">{{ message }}</p>
+                  <button onclick="this.parentElement.style.display='none'" class="text-current opacity-70 hover:opacity-100 transition-opacity">✕</button>
+              </div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col items-center py-10 px-4 w-full h-full relative z-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-500 text-sm glass-panel mt-auto z-10">
+        © 2026 Admin Panel • Automated YOLO Attendance System
+    </footer>
+    
+    <!-- Background Accents -->
+    <div class="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+</body>
+</html>

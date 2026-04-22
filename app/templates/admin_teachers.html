@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-full max-w-[1400px] mx-auto animate-fade-in pb-12">
+    <!-- Grid Layout imitating screenshot exactly -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        {% for td in teacher_data %}
+        <div class="bg-[#1c2135] rounded-xl p-5 border border-white/5 shadow-lg relative flex flex-col h-full">
+            
+            <!-- Top Section: Avatar & Status -->
+            <div class="flex justify-between items-start mb-5">
+                <div class="flex items-center gap-3">
+                    <!-- Circle Avatar -->
+                    <div class="w-12 h-12 rounded-full bg-indigo-500/80 flex items-center justify-center text-white font-medium text-xl shadow-inner">
+                        {{ td.user.name[0] if td.user.name else td.user.username[0]|upper }}
+                    </div>
+                    
+                    <!-- Names -->
+                    <div>
+                        <h4 class="text-white font-bold text-[15px] leading-tight">{{ td.user.name or (td.user.username | capitalize) }}</h4>
+                        <p class="text-gray-400 text-[13px]">@{{ td.user.username }}</p>
+                    </div>
+                </div>
+                
+                <!-- Status Badge -->
+                {% if td.user.is_approved %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-900/40 text-emerald-400 uppercase tracking-widest border border-emerald-500/20">
+                    Active
+                </span>
+                {% else %}
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-900/40 text-amber-400 uppercase tracking-widest border border-amber-500/20">
+                    Pending
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Middle Section: Info Stack -->
+            <div class="space-y-2 mb-6 flex-grow">
+                <!-- Subject -->
+                <div class="flex items-center gap-2 text-[13px]">
+                    <span class="text-base text-gray-300">📚</span>
+                    <span class="text-gray-200 font-medium">{{ td.user.subject or 'Unassigned' }}</span>
+                </div>
+                
+                <!-- Email -->
+                <div class="flex items-center gap-2 text-[13px]">
+                    <span class="text-base text-gray-300">✉️</span>
+                    <span class="text-gray-200">{{ td.user.email or (td.user.username ~ '@school.edu') }}</span>
+                </div>
+                
+                <!-- Password -->
+                <div class="flex items-center gap-2 text-[13px]">
+                    <span class="text-base text-gray-300">🔑</span>
+                    <span class="text-gray-400">Password: <span class="text-indigo-400 font-mono">{{ td.user.visible_password or '••••••••' }}</span></span>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Actions -->
+            <div class="mt-auto pt-2">
+                <a href="{{ url_for('admin.delete_teacher', teacher_id=td.user.id) }}" 
+                   onclick="return confirm('WARNING: Are you sure you want to permanently delete teacher @{{ td.user.username }}?')" 
+                   class="w-full flex items-center justify-center gap-2 py-2 bg-red-950/30 hover:bg-red-900/50 text-red-500 border border-red-900/50 rounded-lg text-xs font-semibold transition-colors duration-200">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    Remove Teacher
+                </a>
+            </div>
+            
+        </div>
+        {% endfor %}
+        
+    </div>
+</div>
+{% endblock %}
