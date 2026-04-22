@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Yolo-Project
-=======
 # YOLO Attendance System
 
 This is a Flask-based automated attendance system that leverages YOLO (You Only Look Once) for image-based tracking and includes an Admin portal and Teacher records dashboard.
@@ -41,4 +38,3 @@ python run.py
 
 The application will be accessible in your web browser at:
 **http://127.0.0.1:8000**
->>>>>>> 3356f7de (Initial commit - YOLO project)
